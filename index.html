@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Dart: The future of the Web, maybe</title>
+
+  <meta name="description" content="Dart: The future of the Web, maybe">
+  <meta name="author" content="Mike Schneider">
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="css/reveal.min.css">
+  <link rel="stylesheet" href="css/theme/night.css" id="theme">
+
+  <!-- For syntax highlighting -->
+  <link rel="stylesheet" href="lib/css/zenburn.css">
+
+  <style type="text/css">
+  .reveal section img {
+    background: none;
+    border: none;
+  }
+  </style>
+
+  <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+  <script>
+  document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+  </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+      </head>
+
+      <body>
+
+        <div class="reveal">
+
+          <!-- Any section element inside of this container is displayed as a slide -->
+          <div class="slides">
+            <section>
+              <h1>Dart</h1>
+              <img src="https://www.dartlang.org/logos/dart-logo.png" width="200" />
+              <h2>The future of the web, maybe</h3>
+                <h3>Mike Schneider, Brand Networks</h3>
+              </section>
+              <section>
+                <h2>Agenda</h2>
+                <ol>
+                  <li>What is Dart?</li>
+                  <li>Why Dart?</li>
+                  <li>Syntax &amp; code samples</li>
+                  <li>The current state of Dart (i.e., is it ready?)</li>
+                </ol>
+              </section>
+              <section>
+                <section>
+                  <h2>What is Dart?</h2>
+                  <p>A new programming language for the Web</p>
+                  <p>Class based (not prototypal), object oriented, optionally typed</p>
+                  <p>Uses a source code VM</p>
+                </section>
+                <section>
+                  <h2>Using Dart</h2>
+                  <ul>
+                    <li>Compiled as <strong>JavaScript</strong> with dart2js</li>
+                    <li>Through the <strong>Dart VM</strong> (currently only Dartium)</li>
+                    <li><strong>Standalone</strong> through the command line</li>
+                  </ul>
+                </section>
+                <section>
+                  <h2>What does Dart consist of?</h2>
+                  <ul>
+                    <li><strong>Dart VM</strong>: Run Dart code natively (only present in Dartium currently).</li>
+                    <li><strong>dart2js</strong>: Compiles Dart code to JavaScript for use in browsers without the VM</li>
+                    <li><strong>Dart Editor</strong>: A full IDE built just for Dart based on Eclipse</li>
+                  </ul>
+                </section>
+              </section>
+              <section>
+                <section>
+                  <h2>Why Dart?</h2>
+                  <p>The goal is to make it easier to develop larger, faster, and more complex Web apps</p>
+                  <ul>
+                    <li>Better performance: <a href="https://www.dartlang.org/performance/">The Dart VM is faster than handwritten JS!</a></li>
+                    <li>Better productivity: better standard libraries, easier to learn (fewer pitfalls)</li>
+                  </ul>
+                </section>
+                <section>
+                  <h2>“Obsoleted” third-party JavaScript libraries</h2>
+                  <p>“Batteries included”</p>
+                  <ul>
+                    <li>
+                      Moment.js (<a href="https://api.dartlang.org/apidocs/channels/stable/#dart-core.DateTime">DateTime</a>, <a href="https://api.dartlang.org/apidocs/channels/stable/#dart-core.Stopwatch">Stopwatch</a>)
+                    </li>
+                    <li>jQuery (<code>querySelector()</code>, <code>querySelectorAll()</code> - <a href="https://www.dartlang.org/articles/improving-the-dom/">read more</a>)</li>
+                    <li>Q (<a href="https://api.dartlang.org/apidocs/channels/stable/#dart-async.Future"><code>Future&lt;T&gt;</code></a>)</li>
+                    <li>Node.js (<a href="https://www.dartlang.org/articles/io/"><code>dart:io</code></a>)</li>
+                    <li>Any AJAX library (<a href="https://api.dartlang.org/apidocs/channels/stable/#dart-dom-html.HttpRequest"><code>HttpRequest</code></a>)</li>
+                    <li>Jasmine, QUnit, etc. (<a href="https://www.dartlang.org/articles/dart-unit-tests/"><code>package:unittest/unittest.dart</code></a>)</li>
+                    <li>i18n libraries (<a href="https://api.dartlang.org/apidocs/channels/be/#intl/intl.Intl"><code>intl</code></a>)</li>
+                  </ul>
+                </section>
+              </section>
+              <section>
+                <h2>Code example: HTTP</h2>
+                <pre><code data-trim contenteditable class="go">
+import 'dart:html';
+import 'dart:convert';
+
+void main() {
+  var url = 'weather.json';
+  HttpRequest.getString(url).then(displayWeather, onError: (error) => print(error));
+}
+
+void displayWeather(result) {
+  print(result);
+  Map weather = JSON.decode(result);
+  var temp = weather['currently']['temperature'];
+  var feelsLike = weather['currently']['apparentTemperature'];
+  var condition = weather['currently']['summary'];
+  var buffer = 'The current temperature in your area is $temp&amp;deg;, '
+  buffer += 'but it feels like $feelsLike&amp;deg;<br />';
+  buffer += 'The current condition in your area is $condition';
+  querySelector('#temperature').innerHtml = buffer;
+}
+            </code></pre>
+          </section>
+          <section>
+            <h2>Code example: Method cascading</h2>
+            <pre><code data-trim contenteditable class="go">
+  import 'dart:html';
+
+  void main() {
+  var address = getAddress()
+    ..setStreet(“Elm”, “13a”)
+    ..city = “Carthage”
+    ..state = “Eurasia”
+    ..zip(66666, extended: 6666);
+  // this is equivalent to
+  var address = getAddress();
+  address.setStreet(“Elm”, “13a”);
+  address.city = “Carthage”;
+  address.state = “Eurasia”
+  address.zip(66666, extended: 6666);
+}
+          </code></pre>
+        </section>
+        <section>
+          <h2>Code example: Classes</h2>
+          <pre><code data-trim contenteditable class="go">
+import 'dart:math';
+
+class Point {
+  num x;
+  num y;
+  Point(this.x, this.y);
+
+  num distanceTo(Point other) {
+    var dx = x - other.x;
+    var dy = y - other.y;
+    return sqrt(dx * dx + dy * dy);
+  }
+}
+          </pre></code>
+        </section>
+        <section>
+          <h2>Is Dart ready for prime time?</h2>
+          <ul>
+            <li>I could only find <a href="http://www.ramen.io/post/46936028144/we-are-switching-to-dart-why">one company</a> other than Google using it in production</li>
+            <li>The AngularDart “Hello {{yourName}}” demo crashed my browser, so don't touch that thing</li>
+            <li><em>Nobody</em> can run your Dart code natively</li>
+            <li>dart2js files can be huge</li>
+          </ul>
+        </section>
+        <section>
+          <h2>The bottom line<h2>
+          <h3>Until the Dart VM is integrated into Chrome Stable, you probably shouldn't use it.</h3>
+        </section>
+        <section>
+          <h2>Resources</h2>
+          <ul>
+            <li><a href="https://www.dartlang.org/">dartlang.org</li>
+            <li><a href="https://www.dartlang.org/slides/">Videos &amp; slide decks from Google employees</a></li>
+            <li><a href="http://stackoverflow.com/questions/tagged/dart">Stack Overflow</a></li>
+            <li><a href="https://www.dartlang.org/support/faq.html">Dart general FAQ</a></li>
+          </ul>
+        </section>
+        </div>
+
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.min.js"></script>
+        <script>
+
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+              controls: true,
+              progress: true,
+              history: true,
+              center: true,
+
+                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+                transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+                // Parallax scrolling
+                // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+                // parallaxBackgroundSize: '2100px 900px',
+
+                // Optional libraries used to extend on reveal.js
+                dependencies: [
+                { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+
+                { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+                ]
+              });
+
+</script>
+
+</body>
+</html>
